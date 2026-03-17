@@ -37,19 +37,15 @@ fun PostcardConfigurationBuilder.onPreExport() {
     showLoading = true
 }
 
-// highlight-starter-kit-postcard-on-export-byte-buffer
 suspend fun PostcardConfigurationBuilder.onExportByteBuffer(): ByteBuffer = export(
     block = requireNotNull(editorContext.engine.scene.get()),
     mimeType = MimeType.PDF,
 )
-// highlight-starter-kit-postcard-on-export-byte-buffer
 
-// highlight-starter-kit-postcard-on-post-export
 suspend fun PostcardConfigurationBuilder.onPostExport(byteBuffer: ByteBuffer) {
     val file = writeToFile(byteBuffer = byteBuffer, mimeType = MimeType.PDF)
     shareFile(file = file, mimeType = MimeType.PDF)
 }
-// highlight-starter-kit-postcard-on-post-export
 
 fun PostcardConfigurationBuilder.onExportError(error: Exception) {
     if (error is CancellationException) {

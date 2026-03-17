@@ -48,13 +48,10 @@ fun PostcardConfigurationBuilder.onPreCreateScene() {
     editorContext.engine.editor.setGlobalScope("editor/add", GlobalScope.DEFER)
 }
 
-// highlight-starter-kit-postcard-on-create-scene
 suspend fun PostcardConfigurationBuilder.onCreateScene() {
     getOrLoadScene(sceneUri = "file:///android_asset/scene/postcard.scene".toUri())
 }
-// highlight-starter-kit-postcard-on-create-scene
 
-// highlight-starter-kit-postcard-on-load-asset-sources
 suspend fun PostcardConfigurationBuilder.onLoadAssetSources() {
     // Load asset sources in parallel from content.json files
     coroutineScope {
@@ -118,7 +115,6 @@ suspend fun PostcardConfigurationBuilder.onLoadAssetSources() {
         editorContext.engine.asset.addSource(textAssetSource)
     }
 }
-// highlight-starter-kit-postcard-on-load-asset-sources
 
 fun PostcardConfigurationBuilder.onPostCreateScene() {
     // Do nothing
