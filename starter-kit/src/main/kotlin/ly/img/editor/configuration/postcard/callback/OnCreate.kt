@@ -16,6 +16,9 @@ import ly.img.engine.DemoAssetSource
 import ly.img.engine.GlobalScope
 import ly.img.engine.populateAssetSource
 
+/**
+ * The callback that is invoked when the editor is created.
+ */
 suspend fun PostcardConfigurationBuilder.onCreate(
     preCreateScene: suspend PostcardConfigurationBuilder.() -> Unit = {
         onPreCreateScene()
@@ -43,15 +46,24 @@ suspend fun PostcardConfigurationBuilder.onCreate(
     }
 }
 
+/**
+ * The callback that is invoked before the scene is created.
+ */
 fun PostcardConfigurationBuilder.onPreCreateScene() {
     showLoading = true
     editorContext.engine.editor.setGlobalScope("editor/add", GlobalScope.DEFER)
 }
 
+/**
+ * The callback that is responsible for creating the scene.
+ */
 suspend fun PostcardConfigurationBuilder.onCreateScene() {
     getOrLoadScene(sceneUri = "file:///android_asset/scene/postcard.scene".toUri())
 }
 
+/**
+ * The callback that loads all the required assets sources.
+ */
 suspend fun PostcardConfigurationBuilder.onLoadAssetSources() {
     // Load asset sources in parallel from content.json files
     coroutineScope {
@@ -116,10 +128,17 @@ suspend fun PostcardConfigurationBuilder.onLoadAssetSources() {
     }
 }
 
+/**
+ * The callback that is invoked right after [onCreateScene], after the scene is created.
+ */
 fun PostcardConfigurationBuilder.onPostCreateScene() {
     // Do nothing
 }
 
+/**
+ * The callback that is invoked as the last step of [onCreate].
+ * It always runs, no matter success or failure on previous steps.
+ */
 fun PostcardConfigurationBuilder.onCreateFinally() {
     showLoading = false
 }

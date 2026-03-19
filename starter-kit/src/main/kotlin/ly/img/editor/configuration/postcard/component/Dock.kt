@@ -46,6 +46,9 @@ import ly.img.engine.DesignBlock
 import ly.img.engine.DesignBlockType
 import java.util.TreeMap
 
+/**
+ * The configuration of the component that is displayed as horizontal list of items at the bottom of the editor.
+ */
 @Composable
 fun PostcardConfigurationBuilder.rememberDock() = Dock.remember {
     scope = {
@@ -61,15 +64,18 @@ fun PostcardConfigurationBuilder.rememberDock() = Dock.remember {
             editorContext.engine.event.subscribe(listOf(stack))
                 .map { editorContext.engine.getCurrentPageIndex() }
         }.collectAsState(initial = 0)
+        // Update Dock whenever the active scene, editor history or current page index changes.
         remember(this, pageIndex, historyTrigger) {
             Dock.Scope(parentScope = this)
         }
     }
     visible = {
         val state by editorContext.state.collectAsState()
+        // Hide Dock in preview mode
         state.viewMode !is EditorViewMode.Preview
     }
     decoration = {
+        // Show transparent background
         Dock.DefaultDecoration(
             background = Color.Transparent,
         ) { it() }
@@ -78,6 +84,7 @@ fun PostcardConfigurationBuilder.rememberDock() = Dock.remember {
         remember(this) {
             val isFirstPage = editorContext.engine.scene.get() != null &&
                 editorContext.engine.getCurrentPageIndex() == 0
+            // Show Dock start aligned on the first page and centered on the second page
             if (isFirstPage) Arrangement.Start else Arrangement.Center
         }
     }
@@ -92,6 +99,7 @@ fun PostcardConfigurationBuilder.rememberDock() = Dock.remember {
                     }
                 }
             }
+            // Show divider only on the first page.
             if (editorContext.engine.getCurrentPageIndex() == 0) {
                 add { Dock.Divider.remember() }
             }
@@ -102,6 +110,9 @@ fun PostcardConfigurationBuilder.rememberDock() = Dock.remember {
     }
 }
 
+/**
+ * Greeting font button at the dock.
+ */
 @Composable
 fun Dock.Button.rememberGreetingFont() = Dock.Button.remember {
     id = { EditorComponentId("ly.img.component.dock.button.greetingFont") }
@@ -120,6 +131,9 @@ fun Dock.Button.rememberGreetingFont() = Dock.Button.remember {
     }
 }
 
+/**
+ * Greeting size button of the dock.
+ */
 @Composable
 fun Dock.Button.rememberGreetingSize() = Dock.Button.remember {
     id = { EditorComponentId("ly.img.component.dock.button.greetingSize") }
@@ -149,6 +163,9 @@ fun Dock.Button.rememberGreetingSize() = Dock.Button.remember {
     }
 }
 
+/**
+ * Colors button of the dock.
+ */
 @Stable
 open class ColorsButtonScope(
     parentScope: EditorScope,
@@ -158,12 +175,17 @@ open class ColorsButtonScope(
         get() = this@ColorsButtonScope.colors
 }
 
+/**
+ * Button builder of the [rememberColors] button.
+ */
 @Stable
 class ColorsButtonBuilder : AbstractButtonBuilder<ColorsButtonScope>() {
     override var scope: ScopedProperty<EditorScope, ColorsButtonScope> = {
         remember(this) {
             val engine = editorContext.engine
             val colorMapping = TreeMap<DesignBlock, Color>()
+            // Creates design block to design block name mapping for all the
+            // design blocks on the current page.
             engine.scene.getCurrentPage()?.let { currentPage ->
                 val target = engine.block.findByName("Greeting")
                     .firstOrNull()
@@ -199,6 +221,9 @@ class ColorsButtonBuilder : AbstractButtonBuilder<ColorsButtonScope>() {
     }
 }
 
+/**
+ * Colors button of the dock.
+ */
 @Composable
 fun Dock.Button.rememberColors() = Button.remember(::ColorsButtonBuilder) {
     id = { EditorComponentId("ly.img.component.dock.button.colors") }

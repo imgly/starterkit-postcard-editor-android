@@ -25,6 +25,9 @@ import ly.img.editor.core.component.rememberTogglePreviewMode
 import ly.img.editor.core.component.rememberUndo
 import ly.img.engine.DesignBlockType
 
+/**
+ * The configuration of the component that is displayed as horizontal list of items at the top of the editor.
+ */
 @Composable
 fun PostcardConfigurationBuilder.rememberNavigationBar() = NavigationBar.remember {
     scope = {
@@ -40,6 +43,7 @@ fun PostcardConfigurationBuilder.rememberNavigationBar() = NavigationBar.remembe
             editorContext.engine.event.subscribe(listOf(stack))
                 .map { editorContext.engine.getCurrentPageIndex() }
         }.collectAsState(initial = 0)
+        // Update NavigationBar whenever the active scene, editor history or current page index changes
         remember(this, pageIndex, historyTrigger) {
             NavigationBar.Scope(parentScope = this)
         }

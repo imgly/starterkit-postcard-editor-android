@@ -23,6 +23,10 @@ import ly.img.editor.core.component.rememberSelectGroup
 import ly.img.editor.core.component.rememberShape
 import ly.img.editor.core.component.rememberTextBackground
 
+/**
+ * The configuration of the component that is displayed as horizontal list of items at the
+ * bottom of the editor when a design block is selected.
+ */
 @Composable
 fun PostcardConfigurationBuilder.rememberInspectorBar() = InspectorBar.remember {
     listBuilder = {

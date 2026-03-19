@@ -6,7 +6,6 @@ import ly.img.editor.core.component.data.Fill
 import ly.img.editor.core.component.data.LinearGradientFill
 import ly.img.editor.core.component.data.RadialGradientFill
 import ly.img.editor.core.component.data.SolidFill
-import ly.img.engine.BlockApi
 import ly.img.engine.ColorSpace
 import ly.img.engine.DesignBlock
 import ly.img.engine.DesignBlockType
@@ -22,9 +21,9 @@ internal fun Engine.getCurrentPageIndex() = scene.run { getPages().indexOf(getCu
 /**
  * Converts engine color into compose color.
  */
-internal fun ly.img.engine.Color.toComposeColor(engine: Engine): Color {
-    val rgbaEngineColor = this as? RGBAColor
-        ?: engine.editor.convertColorToColorSpace(this, ColorSpace.SRGB) as RGBAColor
+internal fun Engine.toComposeColor(color: ly.img.engine.Color): Color {
+    val rgbaEngineColor = color as? RGBAColor
+        ?: editor.convertColorToColorSpace(color, ColorSpace.SRGB) as RGBAColor
     return Color(
         red = rgbaEngineColor.r,
         green = rgbaEngineColor.g,
@@ -38,10 +37,10 @@ internal fun ly.img.engine.Color.toComposeColor(engine: Engine): Color {
  *
  * @param designBlock the design block that is queried.
  */
-internal fun BlockApi.getFillType(designBlock: DesignBlock): FillType? = if (!this.supportsFill(designBlock)) {
+internal fun Engine.getFillType(designBlock: DesignBlock): FillType? = if (!block.supportsFill(designBlock)) {
     null
 } else {
-    FillType.Companion.get(this.getType(this.getFill(designBlock)))
+    FillType.Companion.get(block.getType(block.getFill(designBlock)))
 }
 
 /**
@@ -52,14 +51,14 @@ internal fun BlockApi.getFillType(designBlock: DesignBlock): FillType? = if (!th
 internal fun Engine.getFill(designBlock: DesignBlock): Fill? = if (!block.supportsFill(designBlock)) {
     null
 } else {
-    when (block.getFillType(designBlock)) {
+    when (getFillType(designBlock)) {
         FillType.Color -> {
             val rgbaColor = if (DesignBlockType.Companion.getOrNull(block.getType(designBlock)) == DesignBlockType.Text) {
                 block.getTextColors(designBlock).first()
             } else {
                 block.getColor(designBlock, "fill/solid/color")
             }
-            SolidFill(rgbaColor.toComposeColor(this))
+            SolidFill(toComposeColor(rgbaColor))
         }
 
         FillType.LinearGradient -> {
@@ -104,5 +103,5 @@ internal fun Engine.getFill(designBlock: DesignBlock): Fill? = if (!block.suppor
  */
 internal fun Engine.getStrokeColor(designBlock: DesignBlock): Color? {
     if (!block.supportsStroke(designBlock)) return null
-    return block.getColor(designBlock, "stroke/color").toComposeColor(this)
+    return toComposeColor(block.getColor(designBlock, "stroke/color"))
 }
